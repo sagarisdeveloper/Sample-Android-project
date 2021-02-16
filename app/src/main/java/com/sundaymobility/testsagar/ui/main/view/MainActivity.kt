@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
             override fun onLoadMore() {
                 recyclerView.post {
                     currentPage += 1
-                    mainUserList.add(User());
-                    adapter.notifyItemInserted(mainUserList.size - 1);
+                    mainUserList.add(User())
+                    adapter.notifyItemInserted(mainUserList.size - 1)
 
                     // mocking network delay for API call
                     Handler(Looper.getMainLooper()).postDelayed({
