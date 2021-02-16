@@ -6,3 +6,6 @@ Used MVVM, Hilt, Retrofit2, Coroutines, Pagination on Recycler-view and bottom s
 
 ### Detail dailog 
 ![alt text](app/src/main/assets/detail.jpeg?raw=true "Detail dailog")
+
+#### *Note
+*I kept space between list items because Pagination need to be work proper.  
