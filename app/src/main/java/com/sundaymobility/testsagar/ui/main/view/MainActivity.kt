@@ -17,6 +17,7 @@ import com.sundaymobility.testsagar.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +39,10 @@ class MainActivity : AppCompatActivity() {
     private fun setupUI() {
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
-        adapter = MainAdapter(arrayListOf())
+        adapter = MainAdapter(arrayListOf(), object : MainAdapter.OnItemClickListener {
+            override fun onClick(user: User) =
+                BottomSheetDialog(user).show(supportFragmentManager, "DetailBottomSheet")
+        })
         recyclerView.adapter = adapter
 
         recyclerView.addOnScrolledToEnd {
@@ -48,12 +52,11 @@ class MainActivity : AppCompatActivity() {
                 isLoading = true
                 currentPage += 1
                 // mocking network delay for API call
-                Handler(Looper.getMainLooper()).postDelayed( {
+                Handler(Looper.getMainLooper()).postDelayed({
                     mainViewModel.fetchUsers(currentPage)
                 }, 2000)
             }
         }
-
 
     }
 
