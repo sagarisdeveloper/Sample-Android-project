@@ -12,83 +12,87 @@ import com.sundaymobility.testsagar.R
 import com.sundaymobility.testsagar.data.model.User
 import com.sundaymobility.testsagar.ui.main.adapter.MainAdapter
 import com.sundaymobility.testsagar.ui.main.viewmodel.MainViewModel
-import com.sundaymobility.testsagar.utils.Extensions.addOnScrolledToEnd
 import com.sundaymobility.testsagar.utils.Status
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val mainViewModel: MainViewModel by viewModels()
     private lateinit var adapter: MainAdapter
-    private var isLoading = false
-    private var totalPages = 1 // default
     private var currentPage = 1 // default
+    private var mainUserList: MutableList<User> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupUI()
         setupObserver()
-        isLoading = true
+        progressBar.isVisible = true
         mainViewModel.fetchUsers(currentPage)
     }
 
     private fun setupUI() {
-        val layoutManager = LinearLayoutManager(this)
-        recyclerView.layoutManager = layoutManager
-        adapter = MainAdapter(arrayListOf(), object : MainAdapter.OnItemClickListener {
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        adapter = MainAdapter(this, mainUserList, object : MainAdapter.OnItemClickListener {
             override fun onClick(user: User) =
                 BottomSheetDialog(user).show(supportFragmentManager, "DetailBottomSheet")
         })
-        recyclerView.adapter = adapter
 
-        recyclerView.addOnScrolledToEnd {
-            //What you want to do once the end is reached
-            if (totalPages > currentPage) {
-                progressBar.isVisible = true
-                isLoading = true
-                currentPage += 1
-                // mocking network delay for API call
-                Handler(Looper.getMainLooper()).postDelayed({
-                    mainViewModel.fetchUsers(currentPage)
-                }, 2000)
+        adapter.loadMoreListener = object : MainAdapter.OnLoadMoreListener {
+            override fun onLoadMore() {
+                recyclerView.post {
+                    currentPage += 1
+                    mainUserList.add(User());
+                    adapter.notifyItemInserted(mainUserList.size - 1);
+
+                    // mocking network delay for API call
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        mainViewModel.fetchUsers(
+                            currentPage
+                        )
+                    }, 2000)
+                }
+                // Calling loadMore function in Runnable to fix the
+                // java.lang.IllegalStateException: Cannot call this method while RecyclerView is computing a layout or scrolling error
             }
         }
 
+        recyclerView.adapter = adapter
     }
 
     private fun setupObserver() {
         mainViewModel.users.observe(this, {
             when (it.status) {
-                Status.SUCCESS -> {
-                    progressBar.isVisible = false
-                    it.data?.let { result ->
-                        totalPages = result.totalPages ?: 1
-                        renderList(result.users ?: ArrayList())
-                    }
+                Status.SUCCESS -> {//remove loading view
+                    hideLoader()
+                    it.data?.let { renderList(it.users ?: ArrayList()) }
                     recyclerView.isVisible = true
-                    isLoading = false
                 }
-                Status.LOADING -> {
-                    progressBar.isVisible = true
-                    recyclerView.isVisible = false
-                    isLoading = false
-                }
-                Status.ERROR -> {
-                    //Handle Error
-                    progressBar.isVisible = false
+                Status.ERROR -> { //Handle Error
+                    hideLoader()
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
-                    isLoading = false
+                }
+                else -> {
                 }
             }
         })
     }
 
+    private fun hideLoader() {
+        progressBar.isVisible = false
+        if (mainUserList.isNotEmpty()) mainUserList.removeAt(mainUserList.size - 1)
+    }
+
     private fun renderList(users: List<User>) {
-        adapter.addData(users)
-        adapter.notifyDataSetChanged()
+        if (users.isNotEmpty()) { //add loaded data
+            mainUserList.addAll(users)
+        } else { //result size 0 means there is no more data available at server
+            adapter.isMoreDataAvailable = false
+            //telling adapter to stop calling load more as no more server data available
+            Toast.makeText(this, "No More Data Available", Toast.LENGTH_LONG).show()
+        }
+        adapter.notifyDataChanged() //should call the custom method adapter.notifyDataChanged here to get the correct loading status
     }
 }

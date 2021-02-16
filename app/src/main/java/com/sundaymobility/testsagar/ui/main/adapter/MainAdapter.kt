@@ -1,5 +1,6 @@
 package com.sundaymobility.testsagar.ui.main.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +11,45 @@ import com.sundaymobility.testsagar.R
 import com.sundaymobility.testsagar.data.model.User
 import kotlinx.android.synthetic.main.item_layout.view.*
 
-class MainAdapter(private var users: MutableList<User>, val listener: OnItemClickListener) :
-    RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
+
+class MainAdapter(
+    private var context: Context,
+    private var users: MutableList<User>,
+    private val listener: OnItemClickListener
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    val TYPE_DATA = 0
+    val TYPE_LOAD = 1
+
+    var loadMoreListener: OnLoadMoreListener? = null
+    var isLoading = false
+    var isMoreDataAvailable: Boolean = true
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+        if (viewType == TYPE_DATA) DataViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.item_layout, parent, false)
+        )
+        else LoadHolder(
+            LayoutInflater.from(context).inflate(R.layout.item_loader_layout, parent, false)
+        )
+
+    override fun getItemCount(): Int = users.size
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (position >= itemCount - 1 && isMoreDataAvailable && !isLoading && loadMoreListener != null) {
+            isLoading = true
+            loadMoreListener?.onLoadMore()
+        }
+        if (getItemViewType(position) == TYPE_DATA) (holder as DataViewHolder).bind(
+            users[position],
+            listener
+        )
+        //No else part needed as load holder doesn't bind any data
+    }
+
+    interface OnItemClickListener {
+        fun onClick(user: User)
+    }
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(user: User, listener: OnItemClickListener) {
@@ -24,30 +62,26 @@ class MainAdapter(private var users: MutableList<User>, val listener: OnItemClic
                 .apply(RequestOptions.circleCropTransform())
                 .into(itemView.imageViewAvatar)
 
-            itemView.setOnClickListener {
-                listener.onClick(user)
-            }
+            itemView.setOnClickListener { listener.onClick(user) }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = DataViewHolder(
-        LayoutInflater.from(parent.context).inflate(R.layout.item_layout, parent, false)
+    internal class LoadHolder(itemView: View?) : RecyclerView.ViewHolder(
+        itemView!!
     )
 
-    override fun getItemCount(): Int = users.size
 
-    override fun onBindViewHolder(holder: DataViewHolder, position: Int) =
-        holder.bind(users[position], listener)
-
-    fun addData(list: List<User>) {
-        users.addAll(list)
-        /**
-         * Due to Dark/Light mode Adapter state is getting loss
-         */
-        users = users.distinctBy { it.id }.sortedBy { it.id }.toMutableList()
+    /** notifyDataSetChanged is final method so we can't override it call adapter.notifyDataChanged(); after update the list**/
+    fun notifyDataChanged() {
+        notifyDataSetChanged()
+        isLoading = false
     }
 
-    interface OnItemClickListener {
-        fun onClick(user: User)
+    interface OnLoadMoreListener {
+        fun onLoadMore()
     }
+
+    override fun getItemViewType(position: Int): Int =
+        if ((users[position].id ?: "").equals("")) TYPE_LOAD else TYPE_DATA
+
 }

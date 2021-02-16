@@ -14,31 +14,29 @@
         android:padding="4dp" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textViewUserID"
-        style="@style/TextAppearance.AppCompat.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
-        tools:text="Name Last Name" />
-
-    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/textViewUserName"
         style="@style/TextAppearance.AppCompat.Large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        tools:text="Name Last Name" />
+        tools:text="Name" />
 
     <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/textViewUserEmail"
-        style="@style/TextAppearance.AppCompat.Large"
+        android:id="@+id/textViewUserID"
+        style="@style/TextAppearance.AppCompat.Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
+        tools:text="ID" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/textViewUserEmail"
+        style="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         tools:text="Email" />
 
 </LinearLayout>

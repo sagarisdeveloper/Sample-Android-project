@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginLeft="16dp"
-    android:layout_marginTop="40dp"
+    android:layout_marginTop="8dp"
     android:layout_marginRight="16dp"
-    android:layout_marginBottom="40dp"
+    android:layout_marginBottom="8dp"
     android:padding="4dp"
     app:cardCornerRadius="5dp"
     app:cardElevation="6dp">
@@ -15,7 +15,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="90dp">
+        android:layout_height="100dp"
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/imageViewAvatar"
@@ -27,51 +28,45 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewUserID"
-            style="@style/TextAppearance.AppCompat.Subhead"
+            android:id="@+id/textViewUserName"
+            style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:lines="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageViewAvatar"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="User ID" />
+            tools:text="User Name" />
 
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textViewUserName"
-            style="@style/TextAppearance.AppCompat.Subhead"
+            android:id="@+id/textViewUserID"
+            style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginBottom="4dp"
             android:ellipsize="end"
             android:lines="1"
             app:layout_constraintBottom_toTopOf="@+id/textViewUserEmail"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/imageViewAvatar"
-            app:layout_constraintTop_toBottomOf="@+id/textViewUserID"
-            tools:text="User Name" />
+            app:layout_constraintStart_toStartOf="@+id/textViewUserName"
+            app:layout_constraintTop_toBottomOf="@+id/textViewUserName"
+            tools:text="User ID" />
 
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/textViewUserEmail"
-            style="@style/TextAppearance.AppCompat.Subhead"
+            style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
             android:ellipsize="end"
             android:lines="1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textViewUserName"
+            app:layout_constraintStart_toStartOf="@+id/textViewUserID"
             tools:text="User Email" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

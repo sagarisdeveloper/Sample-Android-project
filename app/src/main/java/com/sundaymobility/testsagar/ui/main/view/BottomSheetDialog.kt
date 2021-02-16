@@ -21,9 +21,9 @@ class BottomSheetDialog(private val user: User) : BottomSheetDialogFragment() {
         val v = inflater.inflate(R.layout.bottom_sheet_layout, container, false)
 
         val imageViewAvatar = v.findViewById<ImageView>(R.id.imageViewAvatar)
-        v.findViewById<TextView>(R.id.textViewUserID).text = "User ID - ${user.id}"
+        v.findViewById<TextView>(R.id.textViewUserID).text = "Id - ${user.id}"
         v.findViewById<TextView>(R.id.textViewUserName).text = user.getName()
-        v.findViewById<TextView>(R.id.textViewUserEmail).text = user.email
+        v.findViewById<TextView>(R.id.textViewUserEmail).text = "Email - ${user.email}"
 
         Glide.with(imageViewAvatar.context)
             .load(user.avatar)

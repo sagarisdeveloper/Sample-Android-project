@@ -15,5 +15,9 @@
 
     </style>
 
+    <style name="progressBarTheme" parent="Theme.TestSagar">
+        <item name="colorAccent">@color/purple_500</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
 
 </resources>
