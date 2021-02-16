@@ -1,4 +1,4 @@
-# Sample-Android-project
+# Sample-Android-Project
 Used MVVM, Hilt, Retrofit2, Coroutines, Pagination on Recycler-view and bottom sheet dialog.
 
 ### Listing Screen. 
